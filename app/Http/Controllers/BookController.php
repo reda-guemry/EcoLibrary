@@ -40,8 +40,13 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show($id)
     {
+        $book = Book::with('category')->find($id) ;
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+
         return response()->json([
             'book' => new BookResource($book)
         ], 200) ;

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StatistiqueController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/books/{book}/borrow', [BorrowController::class, 'emprunter']) ;
     Route::post('/borrows/{borrow}/return', [BorrowController::class, 'retourner']) ;
+
+    Route::get('/books/statistics/most/viewed', [StatistiqueController::class, 'mostViewedBooks']) ;
+    Route::get('/books/statistics/most/borrowed', [StatistiqueController::class, 'mostBorrowedBooks']) ;
 
 
 

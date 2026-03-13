@@ -12,7 +12,13 @@ class BorrowController extends Controller
 
     public function emprunter(Request $request, $bookId)
     {
-        $book = Book::findOrFail($bookId);
+        $book = Book::find($bookId);
+
+        if (!$book) {
+            return response()->json([
+                'message' => 'Book not found.'
+            ], 404);
+        }
 
         if ($book->available_copies < 1) {
             return response()->json([
@@ -66,6 +72,8 @@ class BorrowController extends Controller
             'returned_at' => now(),
             'status' => 'returned',
         ]);
+
+        $borrow->book()->increment('available_copies');
 
         return response()->json([
             'message' => 'Book returned successfully.'
