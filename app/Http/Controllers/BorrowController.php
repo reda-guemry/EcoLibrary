@@ -10,6 +10,42 @@ use Illuminate\Http\Request;
 class BorrowController extends Controller
 {
 
+    /**
+     * @OA\Post(
+     *     path="/api/books/{bookId}/borrow",
+     *     tags={"Emprunts"},
+     *     summary="Emprunter un livre",
+     *     description="Permet à un utilisateur authentifié d'emprunter un exemplaire disponible d'un livre. Un utilisateur ne peut pas emprunter le même livre deux fois simultanément.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="bookId",
+     *         in="path",
+     *         description="Identifiant unique du livre à emprunter",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Livre emprunté avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Book borrowed successfully."),
+     *             @OA\Property(property="borrow", ref="#/components/schemas/Borrow")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Impossible d'effectuer l'emprunt (aucun exemplaire disponible ou déjà emprunté)"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Livre introuvable"
+     *     )
+     * )
+     */
     public function emprunter(Request $request, $bookId)
     {
         $book = Book::find($bookId);
@@ -52,6 +88,45 @@ class BorrowController extends Controller
 
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/borrows/{borrowId}/return",
+     *     tags={"Emprunts"},
+     *     summary="Retourner un livre emprunté",
+     *     description="Permet à un utilisateur de restituer un livre qu'il a précédemment emprunté. Seul le propriétaire de l'emprunt peut effectuer cette action.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="borrowId",
+     *         in="path",
+     *         description="Identifiant unique de l'emprunt à clôturer",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Livre restitué avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Book returned successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ce livre a déjà été restitué"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Action non autorisée - Cet emprunt ne vous appartient pas"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Emprunt introuvable"
+     *     )
+     * )
+     */
     public function retourner(Request $request, $borrowId)
     {
         $borrow = Borrow::findOrFail($borrowId);

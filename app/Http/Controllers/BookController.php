@@ -12,6 +12,27 @@ class BookController extends Controller
 {
     
 
+    /**
+     * @OA\Get(
+     *     path="/api/books",
+     *     tags={"Books"},
+     *     summary="Liste de tous les livres",
+     *     description="Récupère la liste complète de tous les livres disponibles dans la bibliothèque, avec leur catégorie.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste récupérée avec succès",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Book")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     )
+     * )
+     */
     public function index()
     {
         $books = Book::with('category')->get() ;
@@ -20,6 +41,41 @@ class BookController extends Controller
         ], 200) ;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/books",
+     *     tags={"Books"},
+     *     summary="⚠️ Admin Only - Ajouter un nouveau livre",
+     *     description="Permet à un administrateur d'ajouter un nouveau livre dans la bibliothèque.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "author", "category_id", "total_copies", "available_copies", "degraded_copies"},
+     *             @OA\Property(property="title", type="string", example="Le Seigneur des Anneaux"),
+     *             @OA\Property(property="author", type="string", example="J.R.R. Tolkien"),
+     *             @OA\Property(property="category_id", type="integer", example=2),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Une épopée fantastique se déroulant en Terre du Milieu."),
+     *             @OA\Property(property="total_copies", type="integer", example=5),
+     *             @OA\Property(property="available_copies", type="integer", example=5),
+     *             @OA\Property(property="degraded_copies", type="integer", example=0)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Livre créé avec succès",
+     *         @OA\JsonContent(ref="#/components/schemas/Book")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Accès refusé - Réservé aux administrateurs"
+     *     )
+     * )
+     */
     public function store(StoreBookRequest $request)
     {
         // return response()->json([
@@ -34,7 +90,33 @@ class BookController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/books/{id}",
+     *     tags={"Books"},
+     *     summary="Afficher les détails d'un livre",
+     *     description="Récupère les informations détaillées d'un livre spécifique via son identifiant.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Identifiant unique du livre",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Livre récupéré avec succès",
+     *         @OA\JsonContent(ref="#/components/schemas/Book")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Livre introuvable"
+     *     )
+     * )
      */
     public function show($id)
     {
@@ -49,7 +131,49 @@ class BookController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/books/{id}",
+     *     tags={"Books"},
+     *     summary="⚠️ Admin Only - Mettre à jour un livre",
+     *     description="Permet à un administrateur de modifier les informations d'un livre existant.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Identifiant unique du livre à mettre à jour",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", example="Les Misérables - Édition Révisée"),
+     *             @OA\Property(property="author", type="string", example="Victor Hugo"),
+     *             @OA\Property(property="categorie_id", type="integer", example=3),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Un chef-d'œuvre de la littérature française."),
+     *             @OA\Property(property="total_copies", type="integer", example=8),
+     *             @OA\Property(property="available_copies", type="integer", example=6),
+     *             @OA\Property(property="degraded_copies", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Livre mis à jour avec succès",
+     *         @OA\JsonContent(ref="#/components/schemas/Book")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Accès refusé - Réservé aux administrateurs"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Livre introuvable"
+     *     )
+     * )
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
@@ -61,7 +185,39 @@ class BookController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/books/{id}",
+     *     tags={"Books"},
+     *     summary="⚠️ Admin Only - Supprimer un livre",
+     *     description="Permet à un administrateur de supprimer définitivement un livre de la bibliothèque.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Identifiant unique du livre à supprimer",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Livre supprimé avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Book deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié - Veuillez vous connecter d'abord"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Accès refusé - Réservé aux administrateurs"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Livre introuvable"
+     *     )
+     * )
      */
     public function destroy(Book $book)
     {

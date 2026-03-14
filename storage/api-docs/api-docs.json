@@ -134,9 +134,829 @@
                     }
                 }
             }
+        },
+        "/api/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Liste de tous les livres",
+                "description": "Récupère la liste complète de tous les livres disponibles dans la bibliothèque, avec leur catégorie.",
+                "operationId": "a9d13283dfab262e97af3c914d51b7a8",
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Book"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "⚠️ Admin Only - Ajouter un nouveau livre",
+                "description": "Permet à un administrateur d'ajouter un nouveau livre dans la bibliothèque.",
+                "operationId": "47047e95a700b3271b697e57d0965191",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "author",
+                                    "category_id",
+                                    "total_copies",
+                                    "available_copies",
+                                    "degraded_copies"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Le Seigneur des Anneaux"
+                                    },
+                                    "author": {
+                                        "type": "string",
+                                        "example": "J.R.R. Tolkien"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Une épopée fantastique se déroulant en Terre du Milieu.",
+                                        "nullable": true
+                                    },
+                                    "total_copies": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "available_copies": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "degraded_copies": {
+                                        "type": "integer",
+                                        "example": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livre créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "403": {
+                        "description": "Accès refusé - Réservé aux administrateurs"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/books/{id}": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Afficher les détails d'un livre",
+                "description": "Récupère les informations détaillées d'un livre spécifique via son identifiant.",
+                "operationId": "2fdd668eb661591758aff4c56ca9b66a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant unique du livre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livre récupéré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "404": {
+                        "description": "Livre introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "⚠️ Admin Only - Mettre à jour un livre",
+                "description": "Permet à un administrateur de modifier les informations d'un livre existant.",
+                "operationId": "f5ca658c501a803d68655af0365e3802",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant unique du livre à mettre à jour",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Les Misérables - Édition Révisée"
+                                    },
+                                    "author": {
+                                        "type": "string",
+                                        "example": "Victor Hugo"
+                                    },
+                                    "categorie_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Un chef-d'œuvre de la littérature française.",
+                                        "nullable": true
+                                    },
+                                    "total_copies": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "available_copies": {
+                                        "type": "integer",
+                                        "example": 6
+                                    },
+                                    "degraded_copies": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Livre mis à jour avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "403": {
+                        "description": "Accès refusé - Réservé aux administrateurs"
+                    },
+                    "404": {
+                        "description": "Livre introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "⚠️ Admin Only - Supprimer un livre",
+                "description": "Permet à un administrateur de supprimer définitivement un livre de la bibliothèque.",
+                "operationId": "1a9c26667c32b8ed5e5770d7a1cc9d5c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant unique du livre à supprimer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livre supprimé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "403": {
+                        "description": "Accès refusé - Réservé aux administrateurs"
+                    },
+                    "404": {
+                        "description": "Livre introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/books/{bookId}/borrow": {
+            "post": {
+                "tags": [
+                    "Emprunts"
+                ],
+                "summary": "Emprunter un livre",
+                "description": "Permet à un utilisateur authentifié d'emprunter un exemplaire disponible d'un livre. Un utilisateur ne peut pas emprunter le même livre deux fois simultanément.",
+                "operationId": "dabcc43ac92762a80673a9faf16eb74c",
+                "parameters": [
+                    {
+                        "name": "bookId",
+                        "in": "path",
+                        "description": "Identifiant unique du livre à emprunter",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Livre emprunté avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book borrowed successfully."
+                                        },
+                                        "borrow": {
+                                            "$ref": "#/components/schemas/Borrow"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Impossible d'effectuer l'emprunt (aucun exemplaire disponible ou déjà emprunté)"
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "404": {
+                        "description": "Livre introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/borrows/{borrowId}/return": {
+            "post": {
+                "tags": [
+                    "Emprunts"
+                ],
+                "summary": "Retourner un livre emprunté",
+                "description": "Permet à un utilisateur de restituer un livre qu'il a précédemment emprunté. Seul le propriétaire de l'emprunt peut effectuer cette action.",
+                "operationId": "5033941f0ec9d514dc292f86e7b49ee4",
+                "parameters": [
+                    {
+                        "name": "borrowId",
+                        "in": "path",
+                        "description": "Identifiant unique de l'emprunt à clôturer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livre restitué avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book returned successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ce livre a déjà été restitué"
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    },
+                    "403": {
+                        "description": "Action non autorisée - Cet emprunt ne vous appartient pas"
+                    },
+                    "404": {
+                        "description": "Emprunt introuvable"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get all categories",
+                "description": "Retrieve a list of all book categories along with the count of books in each category.",
+                "operationId": "3f5817a34833d0a1f4af4548dd3aeaba",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create a new category Only for Admins ",
+                "description": "Only administrators can create new categories.",
+                "operationId": "71fcad552bb0eaba9fb191fd8d8dcab0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "History"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "A category for historical books"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Category created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You must be logged in first (Unauthenticated)"
+                    },
+                    "403": {
+                        "description": "You are not authorized to perform this action (Forbidden)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get a category by ID",
+                "description": "Retrieve details of a specific category by its ID.",
+                "operationId": "c68e76d323c008827a9e47398b1583de",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update a category Only for Admins ",
+                "description": "Only administrators can update categories.",
+                "operationId": "0e686b2748211cc688333ed705dc111f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Category Name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You must be logged in first (Unauthenticated)"
+                    },
+                    "403": {
+                        "description": "You are not authorized to perform this action (Forbidden)"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category Only for Admins ",
+                "description": "Only administrators can delete categories.",
+                "operationId": "4c12e22a7f8c617bd83bfa1fdc05428d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted successfully"
+                    },
+                    "401": {
+                        "description": "You must be logged in first (Unauthenticated)"
+                    },
+                    "403": {
+                        "description": "You are not authorized to perform this action (Forbidden)"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/books/statistics/most/viewed": {
+            "get": {
+                "tags": [
+                    "Statistiques"
+                ],
+                "summary": "Livres les plus consultés",
+                "description": "Retourne le top 5 des livres les plus consultés dans la bibliothèque, classés par nombre de vues décroissant.",
+                "operationId": "14ca4641c6977e5898702002d00a7013",
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "most_viewed_books": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Book"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/books/statistics/most/borrowed": {
+            "get": {
+                "tags": [
+                    "Statistiques"
+                ],
+                "summary": "Livres les plus empruntés",
+                "description": "Retourne le top 5 des livres les plus empruntés dans la bibliothèque, classés par nombre d'emprunts décroissant.",
+                "operationId": "af82e98bad4b37ccf1d03cd25251d36b",
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "most_borrowed_books": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Book"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié - Veuillez vous connecter d'abord"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
+        "schemas": {
+            "Book": {
+                "title": "Book",
+                "description": "Modèle représentant un livre dans la bibliothèque EcoLibrary",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Le Petit Prince"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "Antoine de Saint-Exupéry"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "le-petit-prince"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Un conte poétique et philosophique sous l'apparence d'un livre pour enfants.",
+                        "nullable": true
+                    },
+                    "total_copies": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "available_copies": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "degraded_copies": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "views": {
+                        "type": "integer",
+                        "example": 152
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/Category"
+                    }
+                },
+                "type": "object"
+            },
+            "Borrow": {
+                "title": "Borrow",
+                "description": "Modèle représentant un emprunt de livre",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "book_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "borrowed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-14T10:00:00Z"
+                    },
+                    "returned_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "en cours",
+                            "returned"
+                        ],
+                        "example": "en cours"
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "description": "Model for book categories",
+                "properties": {
+                    "id": {
+                        "description": "ID of the category",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the category",
+                        "type": "string",
+                        "example": "Science Fiction"
+                    },
+                    "slug": {
+                        "description": "URL-friendly slug of the category",
+                        "type": "string",
+                        "example": "science-fiction"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the category was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-06-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the category was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-06-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -148,6 +968,22 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Books",
+            "description": "Books"
+        },
+        {
+            "name": "Emprunts",
+            "description": "Emprunts"
+        },
+        {
+            "name": "Categories",
+            "description": "Categories"
+        },
+        {
+            "name": "Statistiques",
+            "description": "Statistiques"
         }
     ]
 }
